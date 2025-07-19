@@ -6,7 +6,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 interface Profile {
@@ -20,6 +20,10 @@ interface Profile {
 export default function DoctorProfiles() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [searchResult, setSearchResult] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function fetchProfiles() {
@@ -40,6 +44,25 @@ export default function DoctorProfiles() {
     fetchProfiles();
   }, []);
 
+  async function handleFindDoctor(e: React.FormEvent) {
+    e.preventDefault();
+    setSearching(true);
+    setSearchResult(null);
+    const user_prompt = query;
+    try {
+      const res = await fetch('/api/find-doctor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_prompt }),
+      });
+      const data = await res.json();
+      setSearchResult(data.name ? `Recommended doctor: ${data.name}` : data.result || data.error || 'No match found.');
+    } catch (err) {
+      setSearchResult('Error finding doctor.');
+    }
+    setSearching(false);
+  }
+
   return (
     <Box minHeight="100vh" bgcolor="#000" p={4}>
       <Box maxWidth={800} mx="auto">
@@ -51,6 +74,35 @@ export default function DoctorProfiles() {
         <Typography variant="h4" fontWeight={700} color="#fff" mb={3}>
           Volunteer Doctor Profiles
         </Typography>
+        <Box mb={4}>
+          <Typography color="#bbb" mb={2} fontSize={16}>
+            Let me know the details in the box below and I will use AI to help you find the best doctor to assist with the issue.
+          </Typography>
+          <Box mb={2}>
+            <Typography color="#888" fontSize={15} fontStyle="italic">
+              Example: "I have a 7-year-old child with a persistent high fever, cough, and difficulty breathing. The child is not responding to standard antibiotics. I suspect a complicated pneumonia or possibly tuberculosis. Is there a pediatrician or infectious disease specialist who can advise on further management and possible alternative treatments? Prefer someone that speaks Arabic."
+            </Typography>
+          </Box>
+          <form onSubmit={handleFindDoctor} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Describe the medical issue and any language or specialty requirements..."
+              style={{ padding: 12, borderRadius: 6, border: '1px solid #444', background: '#181818', color: '#fff', fontSize: 16, marginBottom: 8 }}
+              required
+            />
+            <Button type="submit" variant="contained" color="primary" disabled={searching} sx={{ fontWeight: 600, fontSize: 16 }}>
+              {searching ? 'Searching...' : 'Find a Doctor'}
+            </Button>
+          </form>
+          {searchResult && (
+            <Box mt={2} p={2} bgcolor="#181818" borderRadius={2} color="#fff" fontSize={16}>
+              {searchResult}
+            </Box>
+          )}
+        </Box>
         {loading ? (
           <Typography color="#bbb">Loading profiles...</Typography>
         ) : profiles.length === 0 ? (
