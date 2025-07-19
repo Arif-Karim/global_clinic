@@ -6,6 +6,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
+import TextField from '@mui/material/TextField';
 import { useEffect, useState, useRef } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
@@ -84,14 +85,31 @@ export default function DoctorProfiles() {
             </Typography>
           </Box>
           <form onSubmit={handleFindDoctor} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <input
-              ref={inputRef}
-              type="text"
+            <TextField
+              inputRef={inputRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Describe the medical issue and any language or specialty requirements..."
-              style={{ padding: 12, borderRadius: 6, border: '1px solid #444', background: '#181818', color: '#fff', fontSize: 16, marginBottom: 8 }}
+              multiline
+              minRows={3}
+              maxRows={10}
+              fullWidth
               required
+              variant="outlined"
+              sx={{
+                background: '#181818',
+                borderRadius: 1,
+                '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#444' },
+                '&:hover fieldset': { borderColor: '#666' },
+                },
+                '& .MuiInputLabel-root': { color: '#bbb' },
+                mb: 1,
+              }}
+              InputProps={{
+                style: { fontSize: 16, padding: 12 },
+              }}
             />
             <Button type="submit" variant="contained" color="primary" disabled={searching} sx={{ fontWeight: 600, fontSize: 16 }}>
               {searching ? 'Searching...' : 'Find a Doctor'}
