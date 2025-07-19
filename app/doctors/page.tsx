@@ -80,7 +80,7 @@ export default function DoctorProfiles() {
           </Typography>
           <Box mb={2}>
             <Typography color="#888" fontSize={15} fontStyle="italic">
-              Example: "I have a 7-year-old child with a persistent high fever, cough, and difficulty breathing. The child is not responding to standard antibiotics. I suspect a complicated pneumonia or possibly tuberculosis. Is there a pediatrician or infectious disease specialist who can advise on further management and possible alternative treatments? Prefer someone that speaks Arabic."
+              Example: “I have a 7-year-old child with a persistent high fever, cough, and difficulty breathing. The child is not responding to standard antibiotics. I suspect a complicated pneumonia or possibly tuberculosis. Is there a pediatrician or infectious disease specialist who can advise on further management and possible alternative treatments? Prefer someone that speaks Arabic.”
             </Typography>
           </Box>
           <form onSubmit={handleFindDoctor} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
