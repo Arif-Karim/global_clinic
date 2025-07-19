@@ -20,10 +20,8 @@ interface Profile {
   weeklySchedule?: {
     [key: string]: {
       enabled: boolean;
-      timeBlocks?: { startTime: string; endTime: string; }[];
-      // Legacy single time block support
-      startTime?: string;
-      endTime?: string;
+      startTime: string;
+      endTime: string;
     };
   };
   // Legacy support for old contactHours format
@@ -58,46 +56,24 @@ const isDoctorAvailable = (profile: Profile): boolean => {
     // Check new weekly schedule format
     if (profile.weeklySchedule) {
       const daySchedule = profile.weeklySchedule[currentDay];
-      if (!daySchedule || !daySchedule.enabled) {
+      if (!daySchedule || !daySchedule.enabled || !daySchedule.startTime || !daySchedule.endTime) {
         return false; // Doctor not available on this day
       }
 
-      // Check multiple time blocks if available
-      if (daySchedule.timeBlocks && daySchedule.timeBlocks.length > 0) {
-        return daySchedule.timeBlocks.some(timeBlock => {
-          if (!timeBlock.startTime || !timeBlock.endTime) return false;
-          
-          const currentMinutes = timeToMinutes(currentTime);
-          const startMinutes = timeToMinutes(timeBlock.startTime);
-          const endMinutes = timeToMinutes(timeBlock.endTime);
+      const startTime = daySchedule.startTime;
+      const endTime = daySchedule.endTime;
 
-          // Handle overnight shifts (e.g., 22:00 to 06:00)
-          if (startMinutes > endMinutes) {
-            return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
-          } else {
-            return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
-          }
-        });
+      // Convert times to minutes for comparison
+      const currentMinutes = timeToMinutes(currentTime);
+      const startMinutes = timeToMinutes(startTime);
+      const endMinutes = timeToMinutes(endTime);
+
+      // Handle overnight shifts (e.g., 22:00 to 06:00)
+      if (startMinutes > endMinutes) {
+        return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
+      } else {
+        return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
       }
-
-      // Legacy support for single startTime/endTime in weeklySchedule
-      if (daySchedule.startTime && daySchedule.endTime) {
-        const startTime = daySchedule.startTime;
-        const endTime = daySchedule.endTime;
-
-        const currentMinutes = timeToMinutes(currentTime);
-        const startMinutes = timeToMinutes(startTime);
-        const endMinutes = timeToMinutes(endTime);
-
-        // Handle overnight shifts (e.g., 22:00 to 06:00)
-        if (startMinutes > endMinutes) {
-          return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
-        } else {
-          return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
-        }
-      }
-
-      return false; // No valid time blocks found
     }
 
     // Legacy support for old contactHours format
@@ -317,45 +293,19 @@ export default function DoctorProfiles() {
                               <Box display="flex" flexWrap="wrap" gap={0.5}>
                                 {Object.entries(profile.weeklySchedule)
                                   .filter(([_, schedule]) => schedule.enabled)
-                                  .map(([day, schedule]) => {
-                                    // Handle multiple time blocks
-                                    if (schedule.timeBlocks && schedule.timeBlocks.length > 0) {
-                                      return schedule.timeBlocks
-                                        .filter(block => block.startTime && block.endTime)
-                                        .map((timeBlock, index) => (
-                                          <Chip
-                                            key={`${day}-${index}`}
-                                            label={`${day.slice(0, 3).toUpperCase()}: ${timeBlock.startTime}-${timeBlock.endTime}`}
-                                            size="small"
-                                            sx={{ 
-                                              bgcolor: '#2a2a2a', 
-                                              color: '#ccc', 
-                                              fontSize: '10px',
-                                              height: 20,
-                                              mb: 0.5
-                                            }}
-                                          />
-                                        ));
-                                    }
-                                    // Legacy support for single startTime/endTime
-                                    else if (schedule.startTime && schedule.endTime) {
-                                      return (
-                                        <Chip
-                                          key={day}
-                                          label={`${day.slice(0, 3).toUpperCase()}: ${schedule.startTime}-${schedule.endTime}`}
-                                          size="small"
-                                          sx={{ 
-                                            bgcolor: '#2a2a2a', 
-                                            color: '#ccc', 
-                                            fontSize: '10px',
-                                            height: 20,
-                                            mb: 0.5
-                                          }}
-                                        />
-                                      );
-                                    }
-                                    return null;
-                                  })}
+                                  .map(([day, schedule]) => (
+                                    <Chip
+                                      key={day}
+                                      label={`${day.slice(0, 3).toUpperCase()}: ${schedule.startTime}-${schedule.endTime}`}
+                                      size="small"
+                                      sx={{ 
+                                        bgcolor: '#2a2a2a', 
+                                        color: '#ccc', 
+                                        fontSize: '10px',
+                                        height: 20
+                                      }}
+                                    />
+                                  ))}
                               </Box>
                             </Box>
                           )}
