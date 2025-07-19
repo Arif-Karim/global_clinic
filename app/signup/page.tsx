@@ -39,6 +39,24 @@ const timezones = [
   'AEST (UTC+10)',
 ];
 
+// List of countries
+const countries = [
+  'Afghanistan', 'Albania', 'Algeria', 'Argentina', 'Armenia', 'Australia',
+  'Austria', 'Azerbaijan', 'Bahrain', 'Bangladesh', 'Belarus', 'Belgium',
+  'Bolivia', 'Bosnia and Herzegovina', 'Brazil', 'Bulgaria', 'Cambodia',
+  'Canada', 'Chile', 'China', 'Colombia', 'Croatia', 'Czech Republic',
+  'Denmark', 'Ecuador', 'Egypt', 'Estonia', 'Ethiopia', 'Finland',
+  'France', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Hungary',
+  'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Italy', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya',
+  'Kuwait', 'Latvia', 'Lebanon', 'Lithuania', 'Luxembourg', 'Malaysia',
+  'Mexico', 'Morocco', 'Netherlands', 'New Zealand', 'Nigeria', 'Norway',
+  'Pakistan', 'Palestine', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar',
+  'Romania', 'Russia', 'Saudi Arabia', 'Singapore', 'Slovakia', 'Slovenia',
+  'South Africa', 'South Korea', 'Spain', 'Sri Lanka', 'Sweden', 'Switzerland',
+  'Syria', 'Thailand', 'Turkey', 'Ukraine', 'United Arab Emirates',
+  'United Kingdom', 'United States', 'Uruguay', 'Venezuela', 'Vietnam', 'Other'
+];
+
 // Generate time options (24-hour format)
 const generateTimeOptions = () => {
   const times = [];
@@ -68,6 +86,7 @@ export default function Home() {
   const [form, setForm] = useState({
     fullname: '',
     phone: '',
+    country: '',
     bio: '',
     timezone: '',
     availabilitySlots: [] as { day: string; startTime: string; endTime: string; }[]
@@ -76,6 +95,7 @@ export default function Home() {
   const [languageInput, setLanguageInput] = useState('');
   const [showAddSlot, setShowAddSlot] = useState(false);
   const [newSlot, setNewSlot] = useState({ day: '', startTime: '', endTime: '' });
+  const [formErrors, setFormErrors] = useState<string[]>([]);
 
   const daysOfWeek = [
     'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
@@ -140,7 +160,47 @@ export default function Home() {
     setLanguages(languages.filter(lang => lang !== langToDelete));
   };
 
+  const validateForm = () => {
+    const errors: string[] = [];
+    
+    if (!form.fullname.trim()) {
+      errors.push('Full name is required');
+    }
+    
+    if (!form.phone.trim()) {
+      errors.push('Phone number is required');
+    }
+    
+    if (!form.country) {
+      errors.push('Country is required');
+    }
+    
+    if (languages.length === 0) {
+      errors.push('At least one language is required');
+    }
+    
+    if (!form.bio.trim()) {
+      errors.push('Bio is required');
+    }
+    
+    if (!form.timezone) {
+      errors.push('Timezone is required');
+    }
+    
+    if (form.availabilitySlots.length === 0) {
+      errors.push('At least one availability slot is required');
+    }
+    
+    setFormErrors(errors);
+    return errors.length === 0;
+  };
+
   const handleSubmit = async () => {
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+
     // Convert availability slots to the expected weeklySchedule format for the API
     const weeklySchedule: any = {};
     
@@ -183,12 +243,14 @@ export default function Home() {
         setForm({ 
           fullname: '', 
           phone: '', 
+          country: '',
           bio: '', 
           timezone: '', 
           availabilitySlots: []
         });
         setLanguages([]);
         setLanguageInput('');
+        setFormErrors([]);
       } else {
         const data = await res.json();
       }
@@ -238,6 +300,26 @@ export default function Home() {
               InputLabelProps={{ style: { color: '#bbb' } }}
               InputProps={{ style: { backgroundColor: '#222', color: '#fff', borderColor: '#fff' } }}
             />
+            <FormControl fullWidth>
+              <InputLabel sx={{ color: '#bbb' }}>Country</InputLabel>
+              <Select
+                name="country"
+                value={form.country}
+                onChange={(e) => setForm({ ...form, country: e.target.value })}
+                sx={{ 
+                  backgroundColor: '#222', 
+                  color: '#fff',
+                  '& .MuiOutlinedInput-notchedOutline': { borderColor: '#444' },
+                  '& .MuiSvgIcon-root': { color: '#fff' }
+                }}
+              >
+                {countries.map((country) => (
+                  <MenuItem key={country} value={country} sx={{ color: '#000' }}>
+                    {country}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Box>
               <TextField
                 label="Add Language"
@@ -303,7 +385,7 @@ export default function Home() {
 
               {/* Current Availability Slots */}
               <Box sx={{ mb: 3 }}>
-                {form.availabilitySlots.length > 0 && (
+                {form.availabilitySlots.length > 0 ? (
                   <>
                     <Typography variant="body2" color="#ccc" mb={2}>
                       Your availability slots:
@@ -336,6 +418,19 @@ export default function Home() {
                       </Box>
                     ))}
                   </>
+                ) : (
+                  <Box sx={{ 
+                    mb: 2, 
+                    p: 2, 
+                    bgcolor: '#2a1717', 
+                    borderRadius: 1, 
+                    border: '1px solid #f44336'
+                  }}>
+                    <Typography variant="body2" color="#f44336" display="flex" alignItems="center" gap={1}>
+                      <AccessTimeIcon fontSize="small" />
+                      No availability slots added yet. You must add at least one time slot.
+                    </Typography>
+                  </Box>
                 )}
               </Box>
 
@@ -462,11 +557,39 @@ export default function Home() {
               )}
             </Box>
 
+            {/* Form Validation Errors */}
+            {formErrors.length > 0 && (
+              <Box sx={{ 
+                mb: 2, 
+                p: 2, 
+                bgcolor: '#2a1717', 
+                borderRadius: 1, 
+                border: '1px solid #f44336'
+              }}>
+                <Typography variant="body2" color="#f44336" fontWeight={600} mb={1}>
+                  Please fix the following errors:
+                </Typography>
+                {formErrors.map((error, index) => (
+                  <Typography key={index} variant="body2" color="#f44336" sx={{ ml: 1 }}>
+                    • {error}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+
             <Button
               type="submit"
               variant="contained"
               color="inherit"
-              sx={{ color: '#fff', bgcolor: '#000', border: '1px solid #fff', mt: 2, '&:hover': { bgcolor: '#222' } }}
+              disabled={formErrors.length > 0 && formErrors.some(error => error.includes('required'))}
+              sx={{ 
+                color: '#fff', 
+                bgcolor: '#000', 
+                border: '1px solid #fff', 
+                mt: 2, 
+                '&:hover': { bgcolor: '#222' },
+                '&:disabled': { bgcolor: '#666', color: '#999', border: '1px solid #666' }
+              }}
               fullWidth
             >
               Submit
