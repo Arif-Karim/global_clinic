@@ -24,7 +24,7 @@ export default function DoctorProfiles() {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchResult, setSearchResult] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     async function fetchProfiles() {
@@ -72,15 +72,22 @@ export default function DoctorProfiles() {
             &larr; Home
           </Link>
         </Box>
-        <Typography variant="h4" fontWeight={700} color="#fff" mb={3}>
-          Volunteer Doctor Profiles
-        </Typography>
-        <Box mb={4}>
-          <Typography color="#bbb" mb={2} fontSize={16}>
+        <Paper elevation={0} sx={{
+          p: { xs: 2, sm: 4 },
+          bgcolor: '#111',
+          borderRadius: 4,
+          boxShadow: '0 4px 32px 0 rgba(0,0,0,0.12)',
+          border: '1px solid #222',
+          mb: 4,
+        }}>
+          <Typography variant="h4" fontWeight={800} color="#fff" mb={3} textAlign="center" letterSpacing={-1}>
+            Volunteer Doctor Profiles
+          </Typography>
+          <Typography color="#bbb" mb={2} fontSize={16} textAlign="left">
             Let me know the details in the box below and I will use AI to help you find the best doctor to assist with the issue.
           </Typography>
           <Box mb={2}>
-            <Typography color="#888" fontSize={15} fontStyle="italic">
+            <Typography color="#888" fontSize={15} fontStyle="italic" textAlign="left">
               Example: “I have a 7-year-old child with a persistent high fever, cough, and difficulty breathing. The child is not responding to standard antibiotics. I suspect a complicated pneumonia or possibly tuberculosis. Is there a pediatrician or infectious disease specialist who can advise on further management and possible alternative treatments? Prefer someone that speaks Arabic.”
             </Typography>
           </Box>
@@ -111,7 +118,7 @@ export default function DoctorProfiles() {
                 style: { fontSize: 16, padding: 12 },
               }}
             />
-            <Button type="submit" variant="contained" color="primary" disabled={searching} sx={{ fontWeight: 600, fontSize: 16 }}>
+            <Button type="submit" variant="contained" color="inherit" disabled={searching} sx={{ fontWeight: 700, fontSize: 16, bgcolor: '#000', color: '#fff', border: '1px solid #fff', borderRadius: 2, '&:hover': { bgcolor: '#222', borderColor: '#fff' } }}>
               {searching ? 'Searching...' : 'Find a Doctor'}
             </Button>
           </form>
@@ -120,7 +127,7 @@ export default function DoctorProfiles() {
               {searchResult}
             </Box>
           )}
-        </Box>
+        </Paper>
         {loading ? (
           <Typography color="#bbb">Loading profiles...</Typography>
         ) : profiles.length === 0 ? (
@@ -128,24 +135,43 @@ export default function DoctorProfiles() {
         ) : (
           <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
             {profiles.map((profile, idx) => (
-              <Paper key={idx} sx={{ p: 3, bgcolor: '#181818', color: '#fff', borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <Box display="flex" alignItems="flex-start" justifyContent="space-between" mb={1}>
-                  <Box>
-                    <Typography variant="h6" fontWeight={600} color="#fff" mb={0.5}>
-                      {profile.fullname}
-                    </Typography>
-                    <Stack direction="row" spacing={1} mb={1} flexWrap="wrap">
-                      {profile.languages?.map((lang, i) => (
-                        <Chip key={i} label={lang} sx={{ bgcolor: '#333', color: '#fff', border: '1px solid #444', mb: 1 }} />
-                      ))}
-                    </Stack>
-                  </Box>
+              <Paper key={idx} sx={{
+                p: 0,
+                bgcolor: '#151515',
+                color: '#fff',
+                borderRadius: 4,
+                boxShadow: '0 6px 32px 0 rgba(0,0,0,0.18)',
+                border: '1.5px solid #232323',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                overflow: 'hidden',
+                minHeight: 270,
+              }}>
+                <Box px={3} pt={3} pb={1.5}>
+                  <Typography variant="h6" fontWeight={700} color="#fff" mb={0.5} sx={{ fontSize: 22, letterSpacing: -0.5 }}>
+                    {profile.fullname}
+                  </Typography>
+                  <Stack direction="row" spacing={1} mb={1} flexWrap="nowrap" sx={{ overflowX: 'auto', pb: 0.5 }}>
+                    {profile.languages?.map((lang, i) => (
+                      <Chip key={i} label={lang} sx={{ bgcolor: '#232323', color: '#fff', border: '1px solid #444', fontSize: 13, height: 26, minWidth: 60 }} />
+                    ))}
+                  </Stack>
+                </Box>
+                <Box sx={{ borderBottom: '1px solid #222', mx: 3 }} />
+                <Box px={3} py={2} flexGrow={1} display="flex" flexDirection="column">
+                  <Typography variant="body2" color="#ccc" mb={1} sx={{ wordBreak: 'break-word', minHeight: 48, fontSize: 15 }}>
+                    {profile.bio}
+                  </Typography>
+                  <Box flexGrow={1} />
+                </Box>
+                <Box px={3} pb={2}>
                   <Button
                     variant="outlined"
                     color="success"
-                    size="small"
+                    size="medium"
                     startIcon={<WhatsAppIcon sx={{ color: '#25D366' }} />}
-                    sx={{ color: '#25D366', borderColor: '#25D366', minWidth: 0, px: 1.5, ml: 2, mt: 0.5, '&:hover': { bgcolor: '#222', borderColor: '#25D366' } }}
+                    sx={{ color: '#25D366', borderColor: '#25D366', fontWeight: 700, width: '100%', borderRadius: 2, '&:hover': { bgcolor: '#181818', borderColor: '#25D366' } }}
                     href={`https://wa.me/${profile.phone.replace(/[^\d]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -153,15 +179,6 @@ export default function DoctorProfiles() {
                     WhatsApp
                   </Button>
                 </Box>
-                <Typography variant="body2" color="#ccc" mb={1} sx={{ wordBreak: 'break-word' }}>
-                  {profile.bio}
-                </Typography>
-                <Box flexGrow={1} />
-                {profile.createdAt && (
-                  <Typography variant="caption" color="#666" mt={2}>
-                    Joined: {new Date(profile.createdAt).toLocaleString()}
-                  </Typography>
-                )}
               </Paper>
             ))}
           </Box>
