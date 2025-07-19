@@ -144,7 +144,7 @@ export default function Home() {
               rows={6}
               fullWidth
               variant="outlined"
-              placeholder="Please fill in with your bio"
+              placeholder="Example: I'm a board-certified internal medicine physician with 10+ years of experience in primary care and global health. I speak English and Spanish, and have volunteered in rural clinics in Central America. Passionate about improving access to healthcare for underserved communities."
               InputLabelProps={{ style: { color: '#bbb' } }}
               InputProps={{ style: { backgroundColor: '#222', color: '#fff', borderColor: '#fff' } }}
             />
