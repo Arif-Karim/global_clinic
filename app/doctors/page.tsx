@@ -6,6 +6,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
+import TextField from '@mui/material/TextField';
 import { useEffect, useState, useRef } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Switch from '@mui/material/Switch';
@@ -161,8 +162,7 @@ export default function DoctorProfiles() {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchResult, setSearchResult] = useState<string | null>(null);
-  const [showOnlyAvailable, setShowOnlyAvailable] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     async function fetchProfiles() {
@@ -210,54 +210,53 @@ export default function DoctorProfiles() {
             &larr; Home
           </Link>
         </Box>
-        <Typography variant="h4" fontWeight={700} color="#fff" mb={3}>
-          Volunteer Doctor Profiles
-        </Typography>
-        
-        <Box mb={3}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={showOnlyAvailable}
-                onChange={(e) => setShowOnlyAvailable(e.target.checked)}
-                sx={{
-                  '& .MuiSwitch-switchBase.Mui-checked': {
-                    color: '#4caf50',
-                  },
-                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                    backgroundColor: '#4caf50',
-                  },
-                }}
-              />
-            }
-            label={
-              <Typography color="#fff" fontSize={16}>
-                Show only available doctors
-              </Typography>
-            }
-          />
-        </Box>
-        
-        <Box mb={4}>
-          <Typography color="#bbb" mb={2} fontSize={16}>
+        <Paper elevation={0} sx={{
+          p: { xs: 2, sm: 4 },
+          bgcolor: '#111',
+          borderRadius: 4,
+          boxShadow: '0 4px 32px 0 rgba(0,0,0,0.12)',
+          border: '1px solid #222',
+          mb: 4,
+        }}>
+          <Typography variant="h4" fontWeight={800} color="#fff" mb={3} textAlign="center" letterSpacing={-1}>
+            Volunteer Doctor Profiles
+          </Typography>
+          <Typography color="#bbb" mb={2} fontSize={16} textAlign="left">
             Let me know the details in the box below and I will use AI to help you find the best doctor to assist with the issue.
           </Typography>
           <Box mb={2}>
-            <Typography color="#888" fontSize={15} fontStyle="italic">
-              Example: "I have a 7-year-old child with a persistent high fever, cough, and difficulty breathing. The child is not responding to standard antibiotics. I suspect a complicated pneumonia or possibly tuberculosis. Is there a pediatrician or infectious disease specialist who can advise on further management and possible alternative treatments? Prefer someone that speaks Arabic."
+            <Typography color="#888" fontSize={15} fontStyle="italic" textAlign="left">
+              Example: “I have a 7-year-old child with a persistent high fever, cough, and difficulty breathing. The child is not responding to standard antibiotics. I suspect a complicated pneumonia or possibly tuberculosis. Is there a pediatrician or infectious disease specialist who can advise on further management and possible alternative treatments? Prefer someone that speaks Arabic.”
             </Typography>
           </Box>
           <form onSubmit={handleFindDoctor} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <input
-              ref={inputRef}
-              type="text"
+            <TextField
+              inputRef={inputRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Describe the medical issue and any language or specialty requirements..."
-              style={{ padding: 12, borderRadius: 6, border: '1px solid #444', background: '#181818', color: '#fff', fontSize: 16, marginBottom: 8 }}
+              multiline
+              minRows={3}
+              maxRows={10}
+              fullWidth
               required
+              variant="outlined"
+              sx={{
+                background: '#181818',
+                borderRadius: 1,
+                '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#444' },
+                '&:hover fieldset': { borderColor: '#666' },
+                },
+                '& .MuiInputLabel-root': { color: '#bbb' },
+                mb: 1,
+              }}
+              InputProps={{
+                style: { fontSize: 16, padding: 12 },
+              }}
             />
-            <Button type="submit" variant="contained" color="primary" disabled={searching} sx={{ fontWeight: 600, fontSize: 16 }}>
+            <Button type="submit" variant="contained" color="inherit" disabled={searching} sx={{ fontWeight: 700, fontSize: 16, bgcolor: '#000', color: '#fff', border: '1px solid #fff', borderRadius: 2, '&:hover': { bgcolor: '#222', borderColor: '#fff' } }}>
               {searching ? 'Searching...' : 'Find a Doctor'}
             </Button>
           </form>
@@ -266,164 +265,61 @@ export default function DoctorProfiles() {
               {searchResult}
             </Box>
           )}
-        </Box>
-        
+        </Paper>
         {loading ? (
           <Typography color="#bbb">Loading profiles...</Typography>
         ) : profiles.length === 0 ? (
           <Typography color="#bbb">No profiles found.</Typography>
         ) : (
-          <>
-            {showOnlyAvailable && (
-              <Typography color="#bbb" mb={2} fontSize={14}>
-                Showing {profiles.filter(p => isDoctorAvailable(p)).length} of {profiles.length} doctors currently available
-              </Typography>
-            )}
-            <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
-              {profiles
-                .filter(profile => !showOnlyAvailable || isDoctorAvailable(profile))
-                .map((profile, idx) => {
-                  const isAvailable = isDoctorAvailable(profile);
-                  return (
-                    <Paper key={idx} sx={{ p: 3, bgcolor: '#181818', color: '#fff', borderRadius: 2, boxShadow: '0 2px 12px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', height: '100%', opacity: isAvailable ? 1 : 0.6 }}>
-                      <Box display="flex" alignItems="flex-start" justifyContent="space-between" mb={1}>
-                        <Box>
-                          <Box display="flex" alignItems="center" gap={1} mb={0.5}>
-                            <Typography variant="h6" fontWeight={600} color="#fff">
-                              {profile.fullname}
-                            </Typography>
-                            <Box 
-                              sx={{ 
-                                width: 8, 
-                                height: 8, 
-                                borderRadius: '50%', 
-                                bgcolor: isAvailable ? '#4caf50' : '#f44336' 
-                              }} 
-                            />
-                            <Typography variant="caption" color={isAvailable ? '#4caf50' : '#f44336'} fontWeight={500}>
-                              {isAvailable ? 'Available' : 'Offline'}
-                            </Typography>
-                          </Box>
-                          <Stack direction="row" spacing={1} mb={1} flexWrap="wrap">
-                            {profile.languages?.map((lang, i) => (
-                              <Chip key={i} label={lang} sx={{ bgcolor: '#333', color: '#fff', border: '1px solid #444', mb: 1 }} />
-                            ))}
-                          </Stack>
-                          {profile.weeklySchedule && profile.timezone && (
-                            <Box mb={1}>
-                              <Typography variant="caption" color="#888" display="block" mb={0.5}>
-                                Schedule ({profile.timezone}):
-                              </Typography>
-                              <Box display="flex" flexWrap="wrap" gap={0.5}>
-                                {Object.entries(profile.weeklySchedule)
-                                  .filter(([_, schedule]) => schedule.enabled)
-                                  .map(([day, schedule]) => {
-                                    // Handle multiple time blocks
-                                    if (schedule.timeBlocks && schedule.timeBlocks.length > 0) {
-                                      return schedule.timeBlocks
-                                        .filter(block => block.startTime && block.endTime)
-                                        .map((timeBlock, index) => (
-                                          <Chip
-                                            key={`${day}-${index}`}
-                                            label={`${day.slice(0, 3).toUpperCase()}: ${timeBlock.startTime}-${timeBlock.endTime}`}
-                                            size="small"
-                                            sx={{ 
-                                              bgcolor: '#2a2a2a', 
-                                              color: '#ccc', 
-                                              fontSize: '10px',
-                                              height: 20,
-                                              mb: 0.5
-                                            }}
-                                          />
-                                        ));
-                                    }
-                                    // Legacy support for single startTime/endTime
-                                    else if (schedule.startTime && schedule.endTime) {
-                                      return (
-                                        <Chip
-                                          key={day}
-                                          label={`${day.slice(0, 3).toUpperCase()}: ${schedule.startTime}-${schedule.endTime}`}
-                                          size="small"
-                                          sx={{ 
-                                            bgcolor: '#2a2a2a', 
-                                            color: '#ccc', 
-                                            fontSize: '10px',
-                                            height: 20,
-                                            mb: 0.5
-                                          }}
-                                        />
-                                      );
-                                    }
-                                    return null;
-                                  })}
-                              </Box>
-                            </Box>
-                          )}
-                          {/* Legacy support for old contactHours format */}
-                          {!profile.weeklySchedule && profile.contactHours && profile.timezone && (
-                            <Typography variant="caption" color="#888" display="block" mb={1}>
-                              Available: {profile.contactHours.startTime} - {profile.contactHours.endTime} ({profile.timezone})
-                            </Typography>
-                          )}
-                        </Box>
-                        {isAvailable ? (
-                          <Button
-                            variant="outlined"
-                            color="success"
-                            size="small"
-                            startIcon={<WhatsAppIcon sx={{ color: '#25D366' }} />}
-                            sx={{ 
-                              color: '#25D366', 
-                              borderColor: '#25D366', 
-                              minWidth: 0, 
-                              px: 1.5, 
-                              ml: 2, 
-                              mt: 0.5, 
-                              '&:hover': { 
-                                bgcolor: '#222', 
-                                borderColor: '#25D366' 
-                              }
-                            }}
-                            href={`https://wa.me/${profile.phone.replace(/[^\d]/g, '')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            WhatsApp
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            startIcon={<WhatsAppIcon sx={{ color: '#666' }} />}
-                            sx={{ 
-                              color: '#666', 
-                              borderColor: '#666', 
-                              minWidth: 0, 
-                              px: 1.5, 
-                              ml: 2, 
-                              mt: 0.5,
-                              cursor: 'not-allowed'
-                            }}
-                            disabled
-                          >
-                            Offline
-                          </Button>
-                        )}
-                      </Box>
-                      <Typography variant="body2" color="#ccc" mb={1} sx={{ wordBreak: 'break-word' }}>
-                        {profile.bio}
-                      </Typography>
-                      <Box flexGrow={1} />
-                      {profile.createdAt && (
-                        <Typography variant="caption" color="#666" mt={2}>
-                          Joined: {new Date(profile.createdAt).toLocaleString()}
-                        </Typography>
-                      )}
-                    </Paper>
-                  );
-                })}
-            </Box>
-          </>
+          <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
+            {profiles.map((profile, idx) => (
+              <Paper key={idx} sx={{
+                p: 0,
+                bgcolor: '#151515',
+                color: '#fff',
+                borderRadius: 4,
+                boxShadow: '0 6px 32px 0 rgba(0,0,0,0.18)',
+                border: '1.5px solid #232323',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                overflow: 'hidden',
+                minHeight: 270,
+              }}>
+                <Box px={3} pt={3} pb={1.5}>
+                  <Typography variant="h6" fontWeight={700} color="#fff" mb={0.5} sx={{ fontSize: 22, letterSpacing: -0.5 }}>
+                    {profile.fullname}
+                  </Typography>
+                  <Stack direction="row" spacing={1} mb={1} flexWrap="nowrap" sx={{ overflowX: 'auto', pb: 0.5 }}>
+                    {profile.languages?.map((lang, i) => (
+                      <Chip key={i} label={lang} sx={{ bgcolor: '#232323', color: '#fff', border: '1px solid #444', fontSize: 13, height: 26, minWidth: 60 }} />
+                    ))}
+                  </Stack>
+                </Box>
+                <Box sx={{ borderBottom: '1px solid #222', mx: 3 }} />
+                <Box px={3} py={2} flexGrow={1} display="flex" flexDirection="column">
+                  <Typography variant="body2" color="#ccc" mb={1} sx={{ wordBreak: 'break-word', minHeight: 48, fontSize: 15 }}>
+                    {profile.bio}
+                  </Typography>
+                  <Box flexGrow={1} />
+                </Box>
+                <Box px={3} pb={2}>
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    size="medium"
+                    startIcon={<WhatsAppIcon sx={{ color: '#25D366' }} />}
+                    sx={{ color: '#25D366', borderColor: '#25D366', fontWeight: 700, width: '100%', borderRadius: 2, '&:hover': { bgcolor: '#181818', borderColor: '#25D366' } }}
+                    href={`https://wa.me/${profile.phone.replace(/[^\d]/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp
+                  </Button>
+                </Box>
+              </Paper>
+            ))}
+          </Box>
         )}
       </Box>
     </Box>
