@@ -1,15 +1,5 @@
 [
   {
-    "fullname": "Arif Karim",
-    "phone": "+61490368426",
-    "bio": "Dr Arif Karim is a Bangladesh-trained general practitioner with over 15 years of experience. Originally trained in India, he has worked in general practice, radiology, and hospital medicine across Bangladesh. He holds qualifications in Medical Ultrasound (DMU), Child Health (DCH), and has extensive expertise in areas including chronic disease management, children’s health, diabetes, pregnancy care, men’s health, and musculoskeletal injuries. Dr Karim is also accredited for shared antenatal care, iron infusions, and medical termination of pregnancy. He speaks Bengali, Hindi, Gujarati, and English, and is deeply attuned to the needs of his local community.",
-    "languages": [
-      "English",
-      "Bengali"
-    ],
-    "createdAt": "2025-07-18T18:40:17.921Z"
-  },
-  {
     "fullname": "Sara Ahmed",
     "phone": "+201234567890",
     "bio": "Dr Sara Ahmed is an Egyptian-trained pediatrician with 10 years of experience in both Egypt and the UAE. She specializes in childhood infectious diseases, asthma, and nutrition. Dr Ahmed is passionate about community health education and has led several vaccination campaigns. She speaks Arabic and English.",
@@ -49,5 +39,46 @@
       "English"
     ],
     "createdAt": "2025-07-18T19:40:00.000Z"
+  },
+  {
+    "fullname": "Aisha Khan",
+    "phone": "+971555123456",
+    "bio": "Dr Aisha Khan is a Pakistani-trained cardiologist with a focus on heart failure and interventional cardiology. She has worked in Dubai and Karachi, and is passionate about women's heart health and preventive medicine. She speaks Urdu, English, and Arabic.",
+    "languages": [
+      "Urdu",
+      "English",
+      "Arabic"
+    ],
+    "createdAt": "2025-07-19T10:00:00.000Z"
+  },
+  {
+    "fullname": "Jean-Pierre Dubois",
+    "phone": "+33612345678",
+    "bio": "Dr Jean-Pierre Dubois is a French-trained anesthesiologist and critical care specialist. He has extensive experience in trauma, mass casualty, and field hospital settings, and has volunteered with Médecins Sans Frontières. He speaks French and English.",
+    "languages": [
+      "French",
+      "English"
+    ],
+    "createdAt": "2025-07-19T10:10:00.000Z"
+  },
+  {
+    "fullname": "Maria Rossi",
+    "phone": "+393401234567",
+    "bio": "Dr Maria Rossi is an Italian pediatric surgeon with expertise in neonatal and pediatric emergencies. She has worked in Rome and Milan, and has participated in surgical missions in Africa. She speaks Italian and English.",
+    "languages": [
+      "Italian",
+      "English"
+    ],
+    "createdAt": "2025-07-19T10:20:00.000Z"
+  },
+  {
+    "fullname": "Samuel Mensah",
+    "phone": "+233201234567",
+    "bio": "Dr Samuel Mensah is a Ghanaian-trained infectious disease specialist with a focus on malaria, HIV, and tropical medicine. He has worked in both urban and rural Ghana, and is committed to global health equity. He speaks English and Twi.",
+    "languages": [
+      "English",
+      "Twi"
+    ],
+    "createdAt": "2025-07-19T10:30:00.000Z"
   }
 ]
