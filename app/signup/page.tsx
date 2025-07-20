@@ -78,19 +78,30 @@ export default function Home() {
       justifyContent="center"
       bgcolor="#000"
     >
-      <Paper elevation={1} sx={{ p: 4, maxWidth: 480, width: '100%', bgcolor: '#181818', boxShadow: '0 2px 16px rgba(0,0,0,0.5)' }}>
-        <Box mb={2}>
+      <Paper elevation={0} sx={{
+        p: { xs: 2, sm: 4 },
+        maxWidth: 520,
+        width: '100%',
+        bgcolor: '#111',
+        borderRadius: 4,
+        boxShadow: '0 4px 32px 0 rgba(0,0,0,0.12)',
+        border: '1px solid #222',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <Box mb={2} width="100%">
           <Link href="/" style={{ color: '#fff', textDecoration: 'underline', fontWeight: 500, fontSize: 16 }}>
             &larr; Home
           </Link>
         </Box>
-        <Typography variant="h4" fontWeight={600} gutterBottom color="#fff">
-          Build Profile
+        <Typography variant="h4" fontWeight={800} color="#fff" mb={2} textAlign="center" letterSpacing={-1}>
+          Build Your Profile
         </Typography>
-        <Typography variant="body1" color="#fff" mb={3}>
+        <Typography variant="body1" color="#bbb" mb={3} textAlign="center" fontSize={17}>
           We need your profile so we know what issues you can help with. Please fill this out.
         </Typography>
-        <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+        <form onSubmit={e => { e.preventDefault(); handleSubmit(); }} style={{ width: '100%' }}>
           <Box display="flex" flexDirection="column" gap={2}>
             <TextField
               label="Full Name"
@@ -100,7 +111,15 @@ export default function Home() {
               variant="outlined"
               fullWidth
               InputLabelProps={{ style: { color: '#bbb' } }}
-              InputProps={{ style: { backgroundColor: '#222', color: '#fff', borderColor: '#fff' } }}
+              InputProps={{ style: { backgroundColor: '#181818', color: '#fff', borderColor: '#fff', fontWeight: 500, fontSize: 16 } }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#fff',
+                  '& fieldset': { borderColor: '#444' },
+                  '&:hover fieldset': { borderColor: '#666' },
+                },
+                '& .MuiInputLabel-root': { color: '#bbb' },
+              }}
             />
             <TextField
               label="Phone Number"
@@ -110,7 +129,15 @@ export default function Home() {
               variant="outlined"
               fullWidth
               InputLabelProps={{ style: { color: '#bbb' } }}
-              InputProps={{ style: { backgroundColor: '#222', color: '#fff', borderColor: '#fff' } }}
+              InputProps={{ style: { backgroundColor: '#181818', color: '#fff', borderColor: '#fff', fontWeight: 500, fontSize: 16 } }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#fff',
+                  '& fieldset': { borderColor: '#444' },
+                  '&:hover fieldset': { borderColor: '#666' },
+                },
+                '& .MuiInputLabel-root': { color: '#bbb' },
+              }}
             />
             <Box>
               <TextField
@@ -121,8 +148,16 @@ export default function Home() {
                 variant="outlined"
                 fullWidth
                 InputLabelProps={{ style: { color: '#bbb' } }}
-                InputProps={{ style: { backgroundColor: '#222', color: '#fff', borderColor: '#fff' } }}
+                InputProps={{ style: { backgroundColor: '#181818', color: '#fff', borderColor: '#fff', fontWeight: 500, fontSize: 16 } }}
                 placeholder="Type a language and press Enter"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    color: '#fff',
+                    '& fieldset': { borderColor: '#444' },
+                    '&:hover fieldset': { borderColor: '#666' },
+                  },
+                  '& .MuiInputLabel-root': { color: '#bbb' },
+                }}
               />
               <Stack direction="row" spacing={1} mt={1} flexWrap="wrap">
                 {languages.map((lang) => (
@@ -130,7 +165,7 @@ export default function Home() {
                     key={lang}
                     label={lang}
                     onDelete={() => handleDeleteLanguage(lang)}
-                    sx={{ bgcolor: '#333', color: '#fff', border: '1px solid #444', mb: 1 }}
+                    sx={{ bgcolor: '#232323', color: '#fff', border: '1px solid #444', mb: 1, fontSize: 14, height: 28 }}
                   />
                 ))}
               </Stack>
@@ -141,18 +176,27 @@ export default function Home() {
               value={form.bio}
               onChange={handleChange}
               multiline
-              rows={6}
+              minRows={5}
+              maxRows={10}
               fullWidth
               variant="outlined"
               placeholder="Example: I'm a board-certified internal medicine physician with 10+ years of experience in primary care and global health. I speak English and Spanish, and have volunteered in rural clinics in Central America. Passionate about improving access to healthcare for underserved communities."
               InputLabelProps={{ style: { color: '#bbb' } }}
-              InputProps={{ style: { backgroundColor: '#222', color: '#fff', borderColor: '#fff' } }}
+              InputProps={{ style: { backgroundColor: '#181818', color: '#fff', borderColor: '#fff', fontWeight: 500, fontSize: 16 } }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#fff',
+                  '& fieldset': { borderColor: '#444' },
+                  '&:hover fieldset': { borderColor: '#666' },
+                },
+                '& .MuiInputLabel-root': { color: '#bbb' },
+              }}
             />
             <Button
               type="submit"
               variant="contained"
               color="inherit"
-              sx={{ color: '#fff', bgcolor: '#000', border: '1px solid #fff', mt: 2, '&:hover': { bgcolor: '#222' } }}
+              sx={{ color: '#fff', bgcolor: '#000', border: '1px solid #fff', borderRadius: 2, mt: 2, fontWeight: 700, fontSize: 18, py: 1.5, boxShadow: 'none', '&:hover': { bgcolor: '#222', borderColor: '#fff' } }}
               fullWidth
             >
               Submit
