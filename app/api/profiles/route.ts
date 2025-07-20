@@ -1,14 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabaseClient";
 
 export async function GET(req: NextRequest) {
-  try {
-    const filePath = path.join(process.cwd(), 'profiles.json');
-    const file = await fs.readFile(filePath, 'utf-8');
-    const profiles = JSON.parse(file);
-    return NextResponse.json(profiles);
-  } catch (error) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) {
     return NextResponse.json([], { status: 200 });
   }
+  return NextResponse.json(data || []);
 }
