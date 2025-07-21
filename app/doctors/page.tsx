@@ -56,7 +56,7 @@ export default function DoctorProfiles() {
       const res = await fetch('/api/find-doctor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_prompt }),
+        body: JSON.stringify({ user_prompt, doctors: profiles }),
       });
       const data = await res.json();
       if (data.name) {

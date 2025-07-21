@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
-import fs from 'fs/promises';
-import path from 'path';
 
 export async function POST(req: NextRequest) {
   try {
-    const { user_prompt } = await req.json();
-    // Load doctor data
-    const filePath = path.join(process.cwd(), 'profiles.json');
-    const data = await fs.readFile(filePath, 'utf-8');
-    const doctors = JSON.parse(data);
+    const { user_prompt, doctors } = await req.json();
 
     // Build system prompt
     const system_content =
